@@ -1,0 +1,19 @@
+/* 自帶繁體中文免費圓體，不依賴外部字型服務。 */
+@font-face{font-family:'Guardian Text';src:url('assets/fonts/guardian-text.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
+@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-bold.woff2') format('woff2');font-style:normal;font-weight:600 800;font-display:swap}
+@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-heavy.woff2') format('woff2');font-style:normal;font-weight:900;font-display:swap}
+:root{--font-text:'Guardian Text','Microsoft JhengHei','PingFang TC',sans-serif;--font-display:'Guardian Round','Guardian Text','Microsoft JhengHei',sans-serif}
+body{font-family:var(--font-text);font-weight:400;font-synthesis:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button,input,select,textarea{font-family:inherit}
+h1,h2,h3,h4,.brand,.primary-button,.education-heading strong,.boss-alert,.boss-warning strong,.boss-warning>b,.answer-buttons,.boss-continue,.final-score,.countdown b,.hud b,.reward b,.home-summary,.quit-button{font-family:var(--font-display)}
+h1,h2,h3,.landing h2,.result h2,.countdown b,.final-score b,.hud b{font-weight:900}
+b,strong,h4,.primary-button,.boss-continue,.quit-button,.brand,.home-summary{font-family:var(--font-display);font-weight:700}
+.landing h2{letter-spacing:1px;text-shadow:0 3px 0 #ffffffa6}
+.brand{letter-spacing:1px}.brand small{font-family:var(--font-text);font-weight:400}
+.home-eyebrow,.event-label,.game-topline,.game-caption{font-family:var(--font-text)}
+.home-instructions,.boss-guide-rules,.dialog p,.result>p{letter-spacing:.3px}
+.boss #question{font-family:var(--font-text);font-weight:400;line-height:1.8}
+.answer-buttons button{font-family:var(--font-display);font-weight:900}
+.hud b,.final-score b{font-variant-numeric:tabular-nums;letter-spacing:0}
+#boss-points{font-family:var(--font-display);font-weight:900}
+@media(max-width:560px){.landing h2{letter-spacing:.5px}}

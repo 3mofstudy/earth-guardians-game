@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#164d38"><meta name="description" content="加入地球守護隊！60 秒收集綠能寶物、閃避污染，挑戰氣候知識魔王。">
+  <title>地球守護隊｜綠能接接樂</title>
+  <link rel="preload" href="assets/fonts/guardian-text.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/guardian-round-heavy.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="landscape.css"><link rel="stylesheet" href="mission.css"><link rel="stylesheet" href="typography.css">
+</head>
+<body class="at-home">
+<header class="site-header"><a class="brand" href="./" aria-label="地球守護隊首頁"><span class="brand-mark">✳</span><span>地球守護隊<small>EARTH GUARDIANS</small></span></a><div class="event-label"><span></span> 科學節限定任務 <i> / </i> ICDI</div><button id="sound" class="icon-button" aria-label="關閉音效" aria-pressed="false">♫<span>音效開啟</span></button></header>
+<main class="layout">
+  <section class="intro">
+    <div class="eyebrow"><span>MISSION 01</span> 小小行動，大大改變</div>
+    <h1>給地球一個<br><span>涼快的未來。</span><svg class="title-star" viewBox="0 0 50 50" aria-hidden="true"><path d="M25 0 30 18 49 24 31 30 25 50 19 31 0 25 19 19Z" fill="#edb942"/></svg></h1>
+    <p class="lead">綠能接接樂，守護行動開始！<br>和小特務一起接住好能量，讓低碳生活發生。</p>
+    <div class="mission-tags"><span>◷ 60 秒挑戰</span><span>✦ 100 分解鎖獎勵</span></div>
+    <div class="guide-box"><div class="guide-heading"><span>你的守護任務</span><small>HOW TO PLAY</small></div><div class="guide-row"><span class="guide-icon green">↙</span><div><b>接住綠能好夥伴</b><p>認出低碳寶物，累積地球的好能量。</p></div><strong class="positive">+10</strong></div><div class="guide-row"><span class="guide-icon coral">↗</span><div><b>閃開高碳污染怪</b><p>小心污染與浪費，別讓它們進籃子！</p></div><strong class="negative">−10</strong></div><div class="guide-row"><span class="guide-icon yellow">!</span><div><b>迎戰氣候知識魔王</b><p>第 20、40 秒，用是非題守護地球。</p></div><strong class="gold">±20</strong></div></div>
+    <button class="text-button" id="open-guide">查看所有寶物與污染怪 <span>↗</span></button>
+    <div class="desktop-controls"><span>↔</span><p>滑鼠移動或 <kbd>←</kbd> <kbd>→</kbd> / <kbd>A</kbd> <kbd>D</kbd><small>手機、平板可直接左右拖曳小特務</small></p></div>
+  </section>
+  <section class="game-column" aria-label="綠能接接樂遊戲">
+    <div class="game-topline"><span><i></i> 地球降溫計畫</span><small>READY, SET, GREEN!</small></div>
+    <div class="game-shell" id="game-shell">
+      <canvas id="game" width="1280" height="720" tabindex="0" aria-label="使用左右方向鍵、滑鼠或觸控移動角色"></canvas>
+      <div class="hud" id="hud" hidden><div><small>綠能積分</small><b id="score">0</b><span> / 100</span></div><div class="timer"><small>剩餘時間</small><b id="time">60</b><span>秒</span></div><button id="pause" aria-label="暫停遊戲">Ⅱ</button><div class="progress"><i id="progress"></i></div></div>
+      <section id="landing" class="screen landing">
+        <div class="home-heading"><div><span class="home-eyebrow">地球守護隊 · 科學節特別任務</span><h2>綠能接接樂<span>！</span></h2><p>挑戰 60 秒，接住綠能、閃開污染！</p></div><div class="home-summary"><span>◷ 60 秒守護地球</span><span>✦ 100 分獲得現場小禮物資格</span></div><div id="hero-art" class="hero-art" hidden></div></div>
+        <div class="education-panels"><section class="education-panel low-carbon"><div class="education-heading"><div><h3>綠能低碳寶物</h3><p>節能、減少浪費，讓地球更涼快！</p></div><strong>接住 +10 分</strong></div><div id="home-good" class="poster-grid"></div></section><section class="education-panel high-carbon"><div class="education-heading"><div><h3>高碳污染怪獸</h3><p>排放、污染和浪費，這些要閃開！</p></div><strong>閃避 −10 分</strong></div><div id="home-bad" class="poster-grid"></div></section><section class="education-panel boss-education" aria-label="魔王是非題遊戲規則"><div class="education-heading"><div><h3>⚡ 魔王是非題</h3><p>用氣候知識守護地球！</p></div><strong>答對 +20 分</strong></div><div class="poster-grid boss-guide-grid"><figure><img src="assets/cards/boss-1.png" alt="建築節能"></figure><figure><img src="assets/cards/boss-2.png" alt="生物多樣性"></figure><figure><img src="assets/cards/boss-3.png" alt="氣候風險"></figure><div class="boss-guide-rules"><h4>魔王來了，怎麼辦？</h4><ol><li>第 <b>20、40 秒</b>出題，提前 <b>3 秒</b>特效預告。</li><li>暫停掉落與遊戲計時，<b>5 秒內</b>按下 <b>○ 正確</b>或 <b>× 錯誤</b>。</li><li><b>答對 +20 分</b>，答錯或逾時 <b>−20 分</b>。</li><li>看完解說後，<b>點選任意畫面</b>繼續挑戰！</li></ol></div></div></section></div>
+        <div class="home-bottom"><div class="home-instructions"><b>↔ 滑鼠左右移動，或按 ← → / A D 移動小男生，碰到頭部才計分</b><span>⚡ 第 20、40 秒迎戰魔王是非題，5 秒內作答！答對 +20，答錯 −20。</span><small>手機、平板可左右拖曳 · 國際氣候發展智庫（ICDI）</small></div><button id="start" class="primary-button">開始遊戲 <span>↗</span></button><button id="mobile-guide" hidden>查看圖鑑</button></div>
+      </section>
+      <section id="countdown" class="screen countdown" hidden><span>準備好加入地球守護隊</span><b id="count-number">3</b><p>左右移動，用頭接綠能，閃開污染！</p></section>
+      <div id="boss-warning" class="boss-warning" role="status" aria-live="assertive" hidden><span class="warning-symbol">⚡</span><div><strong>魔王題即將登場！</strong><small>準備用氣候知識守護地球</small></div><b id="warning-number">3</b><span class="warning-unit">秒後</span></div>
+      <section id="paused" class="screen modal-backdrop" hidden><div class="dialog"><span class="dialog-kicker">TAKE A BREATH</span><h2>地球也休息一下</h2><p>準備好了，就繼續守護任務吧！</p><button id="resume" class="primary-button">繼續挑戰 ▷</button><button id="restart" class="text-button">重新開始</button></div></section>
+      <section id="boss" class="screen modal-backdrop boss" hidden><div class="dialog"><div class="boss-alert">⚡ 魔王是非題時間</div><div class="boss-time" id="boss-clock"><span id="boss-seconds">5</span><small>秒內作答</small></div><small id="boss-category" class="dialog-kicker"></small><h2 id="question"></h2><div class="answer-buttons"><button id="true" aria-label="答案正確">○<span>正確</span></button><button id="false" aria-label="答案錯誤">×<span>錯誤</span></button></div><div id="boss-feedback" hidden><h3 id="feedback-title"></h3><p id="explanation"></p><strong id="boss-points"></strong><button id="boss-continue" class="boss-continue">點選任意畫面，繼續挑戰 ▷</button></div></div></section>
+      <section id="result" class="screen result" hidden><span class="landing-badge">MISSION COMPLETE</span><div class="result-medal" id="result-medal">🏅</div><p>本次守護行動，收集了</p><div class="final-score"><b id="final-score">0</b><span>分</span></div><h2 id="result-title"></h2><p id="result-message"></p><div id="reward" class="reward"><b>挑戰達標獎勵</b><p>現場會提供精美小禮物！</p></div><button id="again" class="primary-button">再玩一次 <span>↻</span></button><div class="resources"><div class="icdi">ICDI<small>國際氣候發展智庫</small></div><button id="resources" class="text-button">科普資源與 QR Code ↗</button></div></section>
+      <span id="game-hint" class="game-hint" hidden>← 左右移動，用頭接綠能、閃開污染 →</span>
+      <button id="quit" class="quit-button" hidden aria-label="中途退出並返回首頁">↶ 中途退出</button>
+    </div>
+    <div class="game-caption"><span>✧ 每接住一份綠能，都是一份改變。</span><span>01 / EARTH</span></div>
+  </section>
+</main>
+<footer class="site-footer"><div><b>ICDI</b><span>國際氣候發展智庫</span></div><p>一起把氣候知識，變成守護地球的超能力。</p><span>為地球，玩真的。↗</span></footer>
+<dialog id="guide-dialog"><div class="modal-header"><div><span class="eyebrow">FIELD GUIDE</span><h2>守護隊圖鑑</h2></div><button class="close-button" data-close aria-label="關閉圖鑑">×</button></div><p>認識海報上的道具：接住低碳寶物，閃開高污染物！</p><h3 class="positive">綠能低碳寶物 · +10 分</h3><div id="good-gallery" class="gallery"></div><h3 class="negative">高碳污染怪獸 · −10 分</h3><div id="bad-gallery" class="gallery"></div></dialog>
+<dialog id="resource-dialog"><div class="modal-header"><h2>繼續你的低碳探索</h2><button class="close-button" data-close aria-label="關閉資源視窗">×</button></div><p>認識氣候行動，從每天的小選擇開始。</p><img class="poster-qr" src="assets/poster-qr.png" alt="原海報提供的線上再玩一次 QR Code"><small>海報原附 QR Code · 線上再玩一次</small><a class="primary-button" href="https://icdi.network/publication/" target="_blank" rel="noopener noreferrer">前往 ICDI 探索科普資源 ↗</a><p class="resource-note">科普資料與下載項目以 ICDI 官方網站提供內容為準。</p></dialog>
+<audio id="bgm" src="assets/audio/marimba-adventure.mp3" preload="auto" loop></audio>
+<script src="art.js"></script><script src="game.js"></script>
+</body></html>

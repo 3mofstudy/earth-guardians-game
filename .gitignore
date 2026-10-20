@@ -1,0 +1,11 @@
+earth-guardians-game.zip
+tools/font-deps/
+tools/font-sources/
+tools/*.png
+tools/*.jpg
+tools/gensen-files.json
+tools/gensen-tw-files.json
+__pycache__/
+*.pyc
+/綠能接接樂.jpg
+/綠能接接樂2.jpg
