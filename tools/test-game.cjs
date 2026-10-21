@@ -1,12 +1,12 @@
 // 以固定步長模擬遊戲，不在正式頁面提供測試捷徑。
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const elements=new Map();
+const elements=new Map();let viewportRect={left:0,width:450};
 const context2d=new Proxy({createLinearGradient:()=>({addColorStop(){}})}, {get:(t,k)=>k in t?t[k]:()=>{},set:(t,k,v)=>(t[k]=v,true)});
-function element(id){if(!elements.has(id))elements.set(id,{hidden:false,textContent:'',style:{},paused:true,currentTime:0,play(){this.paused=false;return {catch(){}};},pause(){this.paused=true;},classList:{toggle(){},remove(){},add(){}},setAttribute(){},focus(){},addEventListener(){},getContext:()=>context2d,getBoundingClientRect:()=>({left:0,width:450}),setPointerCapture(){}});return elements.get(id);}
+function element(id){if(!elements.has(id))elements.set(id,{hidden:false,textContent:'',style:{},paused:true,currentTime:0,play(){this.paused=false;return {catch(){}};},pause(){this.paused=true;},classList:{toggle(){},remove(){},add(){}},setAttribute(){},focus(){},addEventListener(){},getContext:()=>context2d,getBoundingClientRect:()=>viewportRect,setPointerCapture(){}});return elements.get(id);}
 let queuedFrame,now=0;const documentClicks=[];
 const sandbox={console,Math,Image:class{complete=true;naturalWidth=119;naturalHeight=96},devicePixelRatio:1,requestAnimationFrame:fn=>queuedFrame=fn,window:{addEventListener(){}},document:{body:{append(){},classList:{toggle(){}}},getElementById:element,querySelector:element,querySelectorAll:()=>[],addEventListener(type,listener){if(type==='click')documentClicks.push(listener);}},Art:{icons:Array.from({length:18},(_,i)=>({good:i<9,index:i%9+1,src:`assets/cards/${i<9?'good':'bad'}-${i%9+1}.png`,svg:'<svg/>'})),player:'<svg/>'}};
 vm.createContext(sandbox);
-const source=fs.readFileSync('game.js','utf8').replace(/\}\)\(\);\s*$/,`globalThis.test={reset,answer,pause,resume,finish,caught,position,quit,spawnItem, get data(){return {state,score,elapsed,bossIndex,bossRemaining,stageTime,answered,items,selectedQuestions,targetX,playerX}}, setScore(v){score=v}, setItems(v){items=v}, setElapsed(v){elapsed=v}};})();`);
+const source=fs.readFileSync('game.js','utf8').replace(/\}\)\(\);\s*$/,`globalThis.test={reset,answer,pause,resume,finish,caught,position,quit,spawnItem,resize,touchesHead, get data(){return {W,H,state,score,elapsed,bossIndex,bossRemaining,stageTime,answered,items,selectedQuestions,targetX,playerX}}, setScore(v){score=v}, setItems(v){items=v}, setElapsed(v){elapsed=v}};})();`);
 vm.runInContext(source,sandbox);const game=sandbox.test;
 let auditOverlap=false,checkedFrames=0;
 function assertNoOverlap(){
@@ -42,4 +42,12 @@ for(let seed=1;seed<=8;seed++){
  auditOverlap=false;assert.equal(game.data.state,'result','stress run reaches game over');
 }
 const bgm=element('bgm');if(bgm.muted)click('sound');game.reset();assert.equal(bgm.volume,.28);assert.equal(bgm.currentTime,0);assert.equal(bgm.paused,true,'music waits during countdown');advance(3.8);assert.equal(bgm.paused,false,'music plays during game');bgm.currentTime=12.5;game.pause();assert.equal(bgm.paused,true);assert.equal(bgm.currentTime,12.5);game.resume();assert.equal(bgm.paused,false);assert.equal(bgm.currentTime,12.5,'resume preserves music position');game.setElapsed(19.99);advance(.05);assert.equal(bgm.paused,true,'boss pauses music');click('true');assert.equal(bgm.paused,true,'feedback keeps music paused');click('game');assert.equal(bgm.paused,false,'continue restarts music');assert.equal(bgm.currentTime,12.5);click('sound');assert.equal(bgm.muted,true);assert.equal(bgm.paused,true);click('sound');assert.equal(bgm.paused,false);game.finish();assert.equal(bgm.paused,true,'game over stops music');game.reset();assert.equal(bgm.currentTime,0,'replay restarts track');game.quit();assert.equal(bgm.paused,true);assert.equal(bgm.currentTime,0);
-console.log(`PASS: local MP3 playback, pause/resume position, boss/feedback pause, mute, replay and exit; ${checkedFrames} frames across 8 games without overlap; collision, timers and rewards.`);
+for(const [width,height] of [[390,844],[360,640],[844,390],[768,1024],[1366,768]]){
+ viewportRect={left:0,width,height};game.resize();game.reset();advance(3.8);
+ assert(Math.abs(game.data.W/game.data.H-width/height)<1e-9,'world matches device aspect');
+ game.position({clientX:width});assert.equal(game.data.targetX,game.data.W-110,'touch maps to device right edge');
+ const sample={x:game.data.playerX+36,angle:0,n:0};assert(game.touchesHead(sample,game.data.H-210,game.data.playerX),'head collision adapts to portrait height');assert(!game.touchesHead(sample,game.data.H-20,game.data.playerX),'body still does not catch');
+ auditOverlap=true;for(let frame=0;frame<2800&&game.data.state!=='result';frame++){advance(.025);if(game.data.state==='boss'){click('true');click('game');}}auditOverlap=false;assert.equal(game.data.state,'result');
+ game.reset();advance(3.8);game.setScore(70);const time=game.data.elapsed;viewportRect={left:0,width:height,height:width};game.resize();assert.equal(game.data.score,70);assert.equal(game.data.elapsed,time);assert.equal(game.data.items.length,0,'rotation clears old lanes safely');assert(game.data.playerX>=90&&game.data.playerX<=game.data.W-110);
+}
+console.log(`PASS: audio, collision, timers, rewards; ${checkedFrames} frames without overlap; complete games on 5 portrait/landscape sizes, touch mapping and mid-game rotation.`);

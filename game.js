@@ -2,7 +2,8 @@
 (() => {
 const $ = id => document.getElementById(id);
 const canvas = $('game'), ctx = canvas.getContext('2d');
-const W=1280,H=720,DURATION=60;
+let W=1280,H=720;
+const DURATION=60;
 const ITEM_MAX_TILT=.12,ITEM_CLEARANCE=176;
 const bgm=$('bgm');bgm.volume=.28;
 document.body.append($('landing'));
@@ -16,7 +17,7 @@ const itemImages=Art.icons.map(i=>{const im=new Image();im.src=i.src;return im;}
 const playerImage=new Image();playerImage.src='assets/player-boy.png';
 const leaves=Array.from({length:15},()=>({x:Math.random()*W,y:Math.random()*H,s:4+Math.random()*5,v:9+Math.random()*12,p:Math.random()*6.28}));
 function show(id,visible){$(id).hidden=!visible;}
-function screen(next){for(const id of ['landing','countdown','paused','boss','result'])show(id,id===next);const active=['playing','boss','paused','countdown'].includes(next);show('hud',active);show('quit',active);show('game-hint',next==='playing');document.body.classList.toggle('at-home',next==='landing');state=next;updateBossWarning();syncMusic();}
+function screen(next){for(const id of ['landing','countdown','paused','boss','result'])show(id,id===next);const active=['playing','boss','paused','countdown'].includes(next);show('hud',active);show('quit',active);show('game-hint',next==='playing');document.body.classList.toggle('at-home',next==='landing');state=next;resize();updateBossWarning();syncMusic();}
 function syncMusic(){bgm.muted=muted;if(state==='playing'&&!muted){if(bgm.paused)bgm.play()?.catch(()=>{});}else bgm.pause();}
 function updateBossWarning(){
  const remaining=(bossIndex+1)*20-elapsed;
@@ -44,25 +45,27 @@ function burst(x,y,good,count=16){for(let i=0;i<count;i++)particles.push({x,y,vx
 function spawnItem(){
  // A card reserves its horizontal corridor until it leaves the screen or is
  // caught. Faster cards cannot overtake and overlap cards further below.
- const positions=Array.from({length:7},(_,i)=>100+i*180+(Math.random()-.5)*4);
+ const lanes=Math.max(1,Math.floor((W-200)/180)+1);
+ const margin=(W-(lanes-1)*180)/2;
+ const positions=Array.from({length:lanes},(_,i)=>margin+i*180+(Math.random()-.5)*4);
  const available=positions.filter(x=>items.every(item=>Math.abs(item.x-x)>=ITEM_CLEARANCE));
  if(!available.length)return false;
  const x=available[Math.floor(Math.random()*available.length)],good=Math.random()<.7;
  const group=Art.icons.map((i,n)=>({...i,n})).filter(i=>i.good===good),icon=group[Math.floor(Math.random()*group.length)];
- items.push({x,y:-80,vy:125+Math.random()*40+elapsed*.75,angle:(Math.random()-.5)*.09,spin:(Math.random()-.5)*.035,n:icon.n,good,index:icon.index,hit:false});
+ items.push({x,y:-80,vy:(125+Math.random()*40+elapsed*.75)*fallScale(),angle:(Math.random()-.5)*.09,spin:(Math.random()-.5)*.035,n:icon.n,good,index:icon.index,hit:false});
  return true;
 }
 function caught(item){score+=item.good?10:-10;catchBounce=1;updateHud();burst(item.x,item.y,item.good);floats.push({x:item.x,y:item.y-10,text:item.good?'+10':'−10',life:.9,good:item.good});sound(item.good?'good':'bad');if(!item.good)shake();}
 function roundRect(x,y,w,h,r,fill){ctx.fillStyle=fill;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
-function background(){const gradient=ctx.createLinearGradient(0,0,0,H);gradient.addColorStop(0,'#66c9f0');gradient.addColorStop(.55,'#b4e8ff');gradient.addColorStop(1,'#e4f7ed');ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
+function background(sceneW=W,sceneH=H){ctx.save();const scale=sceneW/1280;ctx.scale(scale,scale);const W=1280,H=sceneH/scale;const gradient=ctx.createLinearGradient(0,0,0,H);gradient.addColorStop(0,'#66c9f0');gradient.addColorStop(.55,'#b4e8ff');gradient.addColorStop(1,'#e4f7ed');ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
  ctx.fillStyle='#fff0ae';ctx.beginPath();ctx.arc(W-180,145,57,0,Math.PI*2);ctx.fill();
  for(const c of [{x:105,y:135,s:1.3},{x:420,y:218,s:.9},{x:890,y:105,s:1.1},{x:1050,y:260,s:.8}]){ctx.save();ctx.translate((c.x+clock*4)%(W+160)-40,c.y);ctx.scale(c.s,c.s);ctx.fillStyle='#ffffff';ctx.beginPath();ctx.ellipse(0,0,43,15,0,0,7);ctx.ellipse(23,-12,23,21,0,0,7);ctx.ellipse(51,0,34,15,0,0,7);ctx.fill();ctx.restore();}
- ctx.fillStyle='#a7d892';ctx.beginPath();ctx.moveTo(0,470);ctx.bezierCurveTo(240,375,400,540,650,455);ctx.bezierCurveTo(900,375,1100,440,W,450);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+ ctx.save();ctx.translate(0,H-720);ctx.fillStyle='#a7d892';ctx.beginPath();ctx.moveTo(0,470);ctx.bezierCurveTo(240,375,400,540,650,455);ctx.bezierCurveTo(900,375,1100,440,W,450);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
  ctx.fillStyle='#80c66e';ctx.beginPath();ctx.moveTo(0,570);ctx.bezierCurveTo(260,470,500,560,740,510);ctx.bezierCurveTo(960,470,1100,540,W,510);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
  ctx.save();ctx.globalAlpha=.3;ctx.strokeStyle='#799f68';ctx.lineWidth=4;for(const t of [{x:190,y:370,s:1},{x:990,y:365,s:1.2},{x:1090,y:420,s:.7}]){ctx.save();ctx.translate(t.x,t.y);ctx.scale(t.s,t.s);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,120);ctx.stroke();ctx.rotate(clock*.18);for(let i=0;i<3;i++){ctx.rotate(Math.PI*2/3);ctx.beginPath();ctx.moveTo(0,0);ctx.quadraticCurveTo(-13,-25,0,-57);ctx.quadraticCurveTo(7,-22,0,0);ctx.fillStyle='#91b27b';ctx.fill();}ctx.restore();}ctx.restore();
  for(const t of [{x:25,y:425,s:1.8},{x:1235,y:450,s:1.6},{x:106,y:535,s:1}]){ctx.save();ctx.translate(t.x,t.y);ctx.scale(t.s,t.s);ctx.strokeStyle='#91ad72';ctx.lineWidth=9;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,109);ctx.stroke();ctx.fillStyle='#9dbd76';for(const [x,y,r]of [[-12,6,25],[12,-12,28],[25,21,24],[-13,29,25],[6,34,28]]){ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();}ctx.restore();}
- ctx.fillStyle='#5eac58';ctx.beginPath();ctx.ellipse(W/2,H+100,W*.8,170,0,0,7);ctx.fill();
- for(const l of leaves){ctx.save();ctx.translate(l.x+Math.sin(clock*.5+l.p)*17,l.y);ctx.rotate(Math.sin(clock*.4+l.p));ctx.fillStyle='#8eb36860';ctx.beginPath();ctx.ellipse(0,0,l.s,l.s*.4,-.5,0,7);ctx.fill();ctx.restore();}
+ ctx.fillStyle='#5eac58';ctx.beginPath();ctx.ellipse(W/2,820,W*.8,170,0,0,7);ctx.fill();ctx.restore();
+ ctx.restore();for(const l of leaves){ctx.save();ctx.translate(l.x+Math.sin(clock*.5+l.p)*17,l.y);ctx.rotate(Math.sin(clock*.4+l.p));ctx.fillStyle='#8eb36860';ctx.beginPath();ctx.ellipse(0,0,l.s,l.s*.4,-.5,0,7);ctx.fill();ctx.restore();}
 }
 function drawItem(item){ctx.save();ctx.translate(item.x,item.y);ctx.rotate(item.angle);ctx.shadowColor='#54703730';ctx.shadowBlur=12;ctx.shadowOffsetY=5;const im=itemImages[item.n];if(im.complete&&im.naturalWidth){const width=144,height=width*im.naturalHeight/im.naturalWidth;ctx.drawImage(im,-width/2,52-height,width,height);}ctx.restore();}
 // 將道具的旋轉矩形轉換至頭部橢圓座標，檢查矩形與單位圓相交。
@@ -99,7 +102,7 @@ function tick(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;clock+
   if(bossIndex<2&&next>=(bossIndex+1)*20){elapsed=(bossIndex+1)*20;beginBoss();updateHud();}
   else if(next>=DURATION){elapsed=DURATION;updateHud();finish();}
   else{elapsed=next;const previousX=playerX;const dir=(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);if(dir)targetX=Math.max(90,Math.min(W-110,targetX+dir*780*dt));playerX+=(targetX-playerX)*Math.min(1,dt*16);spawn-=dt;if(spawn<=0)spawn=spawnItem() ? .63+Math.random()*.28 : .12;
-   for(const item of items){const prev=item.y;item.vy+=6*dt;item.y+=item.vy*dt;item.angle=Math.max(-ITEM_MAX_TILT,Math.min(ITEM_MAX_TILT,item.angle+item.spin*dt));if(crossedHead(item,prev,previousX)){item.hit=true;caught(item);}}
+   for(const item of items){const prev=item.y;item.vy+=6*fallScale()*dt;item.y+=item.vy*dt;item.angle=Math.max(-ITEM_MAX_TILT,Math.min(ITEM_MAX_TILT,item.angle+item.spin*dt));if(crossedHead(item,prev,previousX)){item.hit=true;caught(item);}}
    items=items.filter(i=>!i.hit&&i.y<H+60);updateHud();
   }
  }else if(state==='boss'&&!answered){bossRemaining=Math.max(0,bossRemaining-dt);$('boss-seconds').textContent=Math.ceil(bossRemaining);if(bossRemaining<=0)answer(null);}
@@ -115,6 +118,11 @@ window.addEventListener('blur',()=>{keys.clear();pause();});document.addEventLis
 $('start').onclick=reset;$('again').onclick=reset;$('restart').onclick=reset;$('pause').onclick=pause;$('resume').onclick=resume;$('quit').onclick=quit;$('true').onclick=()=>answer(true);$('false').onclick=()=>answer(false);$('boss-continue').onclick=continueBoss;
 $('sound').onclick=()=>{muted=!muted;$('sound').innerHTML=muted?'♪<span>音效關閉</span>':'♫<span>音效開啟</span>';$('sound').setAttribute('aria-label',muted?'開啟音效':'關閉音效');$('sound').setAttribute('aria-pressed',String(muted));syncMusic();if(!muted){initAudio();sound('good');}};
 $('open-guide').onclick=$('mobile-guide').onclick=()=>$('guide-dialog').showModal();$('resources').onclick=()=>$('resource-dialog').showModal();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
-// 高 DPI 畫布維持固定遊戲座標，縮放不影響物理或觸控位置。
-function resize(){const ratio=Math.min(devicePixelRatio||1,2);canvas.width=W*ratio;canvas.height=H*ratio;ctx.setTransform(ratio,0,0,ratio,0,0);}window.addEventListener('resize',resize);resize();requestAnimationFrame(tick);
+// 遊戲座標隨可見畫面延伸，保持卡片與人物比例；直式落下距離增加時同步調整速度。
+function fallScale(){return Math.max(.5,(H-300)/420);}
+function resize(){const rect=canvas.getBoundingClientRect(),aspect=rect.width>0&&rect.height>0?rect.width/rect.height:16/9;
+ const nextW=720*Math.max(1,aspect),nextH=720/Math.min(1,aspect);
+ if(Math.abs(nextW-W)>1||Math.abs(nextH-H)>1){const oldW=W,oldH=H;W=nextW;H=nextH;playerX=Math.max(90,Math.min(W-110,playerX/oldW*W));targetX=Math.max(90,Math.min(W-110,targetX/oldW*W));items=[];floats=[];particles=[];spawn=Math.max(spawn,.4);for(const leaf of leaves){leaf.x=leaf.x/oldW*W;leaf.y=leaf.y/oldH*H;}}
+ const ratio=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(rect.width>0?rect.width*ratio:W);canvas.height=Math.round(rect.height>0?rect.height*ratio:H);ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+}window.addEventListener('resize',resize);if(typeof ResizeObserver!=='undefined')new ResizeObserver(resize).observe(canvas);resize();requestAnimationFrame(tick);
 })();
