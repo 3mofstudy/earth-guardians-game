@@ -3,7 +3,8 @@
 const $ = id => document.getElementById(id);
 const canvas = $('game'), ctx = canvas.getContext('2d');
 let W=1280,H=720;
-const DURATION=60;
+const DURATION=60,BOSS_DURATION=10;
+let lowCarbonDrops=0;
 const ITEM_MAX_TILT=.12,ITEM_CLEARANCE=176;
 const bgm=$('bgm');bgm.volume=.28;
 document.body.append($('landing'));
@@ -12,9 +13,14 @@ const questions=[
  {category:'生物多樣性',text:'一座森林裡如果住著鳥類、青蛙、蜜蜂和許多不同種類的動植物（生物多樣性高），面對乾旱或病蟲害時，會比只有單一種樹木的森林更有抵抗力，對不對？',answer:true,explanation:'物種越豐富多元，大自然的抗災免疫力就越強！'},
  {category:'氣候風險',text:'在氣候風險中，「暴露度」是指有很多居民、學校、房子和馬路剛好位在容易淹水或土石流等危險區域內，請問是否正確？',answer:true,explanation:'沒錯！當人與物資都在危險地盤（暴露度高），災情就會更嚴重！'}
 ];
-let state='landing',score=0,elapsed=0,spawn=0,stageTime=0,bossIndex=0,bossRemaining=5,answered=false,selectedQuestions=[],items=[],particles=[],floats=[],playerX=225,targetX=225,clock=0,last=0,returnState='playing',keys=new Set(),muted=false,audio=null,catchBounce=0,warningSecond=0;
+let state='landing',score=0,elapsed=0,spawn=0,stageTime=0,bossIndex=0,bossRemaining=BOSS_DURATION,answered=false,selectedQuestions=[],items=[],particles=[],floats=[],playerX=225,targetX=225,clock=0,last=0,returnState='playing',keys=new Set(),muted=false,audio=null,catchBounce=0,warningSecond=0;
 const itemImages=Art.icons.map(i=>{const im=new Image();im.src=i.src;return im;});
-const playerImage=new Image();playerImage.src='assets/player-boy.png';
+const playerImage=new Image();playerImage.src='assets/player-bear.png';
+// 原圖 2913 × 3600 等比例縮小；顯示範圍與頭部碰撞使用相同座標基準。
+const PLAYER_SCALE=.9;
+const PLAYER={width:180*PLAYER_SCALE,height:180*3600/2913*PLAYER_SCALE,bottom:46};
+// 相對於透明 PNG 的頭、耳、身體、雙手與雙腳，避開圖片四角空白。
+const PLAYER_PARTS=[[.51,.195,.26,.17],[.25,.115,.10,.09],[.77,.115,.10,.09],[.51,.59,.28,.28],[.78,.35,.14,.09],[.91,.30,.07,.08],[.17,.48,.13,.10],[.27,.89,.17,.09],[.64,.94,.13,.045]];
 const leaves=Array.from({length:15},()=>({x:Math.random()*W,y:Math.random()*H,s:4+Math.random()*5,v:9+Math.random()*12,p:Math.random()*6.28}));
 function show(id,visible){$(id).hidden=!visible;}
 function screen(next){for(const id of ['landing','countdown','paused','boss','result'])show(id,id===next);const active=['playing','boss','paused','countdown'].includes(next);show('hud',active);show('quit',active);show('game-hint',next==='playing');document.body.classList.toggle('at-home',next==='landing');state=next;resize();updateBossWarning();syncMusic();}
@@ -32,14 +38,14 @@ function updateHud(){ $('score').textContent=score;$('time').textContent=Math.ce
 function initAudio(){if(!audio){const AC=window.AudioContext||window.webkitAudioContext;if(AC)audio=new AC();}if(audio?.state==='suspended')audio.resume().catch(()=>{});}
 function tone(frequency,duration,type='sine',volume=.055,delay=0){if(!audio||muted||audio.state!=='running')return;const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(volume,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.02);}
 function sound(kind){if(kind==='good'){tone(660,.16);tone(990,.24,'sine',.05,.1);}else if(kind==='bad'){tone(140,.2,'triangle',.075);tone(95,.23,'triangle',.06,.08);}else if(kind==='boss'){[392,523,659,523].forEach((f,i)=>tone(f,.19,'triangle',.07,i*.12));}else if(kind==='win'){[523,659,784,1046].forEach((f,i)=>tone(f,.3,'sine',.07,i*.13));}else tone(490,.1);}
-function reset(){initAudio();bgm.pause();bgm.currentTime=0;items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;spawn=.55;bossIndex=0;stageTime=0;playerX=targetX=W/2;selectedQuestions=[...questions].sort(()=>Math.random()-.5).slice(0,2);updateHud();$('count-number').textContent='3';screen('countdown');sound('tick');}
-function beginBoss(){items=[];floats=[];bossRemaining=5;answered=false;const q=selectedQuestions[bossIndex];$('question').textContent=q.text;$('boss-category').textContent=q.category;$('boss-seconds').textContent='5';show('boss-clock',true);show('boss-feedback',false);document.querySelector('.answer-buttons').hidden=false;screen('boss');sound('boss');$('true').focus({preventScroll:true});}
+function reset(){lowCarbonDrops=0;initAudio();bgm.pause();bgm.currentTime=0;items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;spawn=.55;bossIndex=0;stageTime=0;playerX=targetX=W/2;selectedQuestions=[...questions].sort(()=>Math.random()-.5).slice(0,2);updateHud();$('count-number').textContent='3';screen('countdown');sound('tick');}
+function beginBoss(){items=[];floats=[];bossRemaining=BOSS_DURATION;answered=false;const q=selectedQuestions[bossIndex];$('question').textContent=q.text;$('boss-category').textContent=q.category;$('boss-seconds').textContent=String(BOSS_DURATION);show('boss-clock',true);show('boss-feedback',false);document.querySelector('.answer-buttons').hidden=false;screen('boss');sound('boss');$('true').focus({preventScroll:true});}
 function answer(value){if(state!=='boss'||answered)return;answered=true;stageTime=0;const q=selectedQuestions[bossIndex],correct=value===q.answer;score+=correct?20:-20;updateHud();document.querySelector('.answer-buttons').hidden=true;show('boss-clock',false);show('boss-feedback',true);$('feedback-title').textContent=correct?'太棒了！🎉 成功防禦氣候危機！':value===null?'時間到！⚠️ 危機擴大了！':'哎呀！⚠️ 危機擴大了！';$('explanation').textContent=`正確答案：○ 正確。${q.explanation}`;$('boss-points').textContent=correct?'+20 分':'−20 分';$('boss-points').style.color=correct?'#438052':'#d16c53';sound(correct?'win':'bad');if(correct)burst(W/2,320,true,35);else shake();$('boss-continue').focus({preventScroll:true});}
 function continueBoss(){if(state!=='boss'||!answered)return false;bossIndex++;answered=false;stageTime=0;spawn=.6;keys.clear();initAudio();screen('playing');canvas.focus({preventScroll:true});return true;}
 function pause(){if(!['playing','boss','countdown'].includes(state))return;returnState=state;screen('paused');keys.clear();}
 function resume(){if(state!=='paused')return;initAudio();screen(returnState);}
-function quit(){items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;bossIndex=0;stageTime=0;bossRemaining=5;answered=false;selectedQuestions=[];catchBounce=0;screen('landing');bgm.currentTime=0;updateHud();$('start').focus({preventScroll:true});}
-function finish(){items=[];keys.clear();screen('result');$('final-score').textContent=score;const win=score>=100;$('result-medal').textContent=win?'🏅':'🌱';$('result-title').textContent=win?'超級氣候小院士':'低碳生活小尖兵';$('result-message').textContent=win?'恭喜你！🎉 積分達標，獲得精美小禮物資格！':'差一點點！再試一次，挑戰 100 分拿禮物！';show('reward',win);sound(win?'win':'good');if(win)burst(W/2,150,true,65);$('again').focus({preventScroll:true});}
+function quit(){lowCarbonDrops=0;items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;bossIndex=0;stageTime=0;bossRemaining=BOSS_DURATION;answered=false;selectedQuestions=[];catchBounce=0;screen('landing');bgm.currentTime=0;updateHud();$('start').focus({preventScroll:true});}
+function finish(){items=[];keys.clear();screen('result');$('final-score').textContent=score;const win=score>=300;$('result').classList.toggle('is-win',win);$('result-medal').textContent=win?'🏅':'🌱';$('result-title').textContent=win?'超級氣候小專家':'再接再厲';$('ending-bear').src=win?'assets/ending-win.png':'assets/ending-encourage.png';$('ending-bear').alt=win?'拿著禮物慶祝的淨零小熊':'揮手加油、鼓勵再挑戰的淨零小熊';$('ending-cheer').textContent=win?'恭喜你！':'再試一次！';$('result-message').textContent=win?'積分達 300 分以上，現場送精美小禮物！':'一起挑戰 300 分！下次一定更厲害！';show('reward',win);sound(win?'win':'good');if(win)burst(W/2,150,true,65);$('again').focus({preventScroll:true});}
 function shake(){const shell=$('game-shell');shell.classList.remove('shake');void shell.offsetWidth;shell.classList.add('shake');}
 function burst(x,y,good,count=16){for(let i=0;i<count;i++)particles.push({x,y,vx:(Math.random()-.5)*230,vy:-80-Math.random()*180,life:.65+Math.random()*.4,max:1,color:good?['#f5cf58','#8dbe69','#fff7c5'][i%3]:['#e79172','#efbb8e'][i%2],size:3+Math.random()*5});}
 function spawnItem(){
@@ -50,9 +56,10 @@ function spawnItem(){
  const positions=Array.from({length:lanes},(_,i)=>margin+i*180+(Math.random()-.5)*4);
  const available=positions.filter(x=>items.every(item=>Math.abs(item.x-x)>=ITEM_CLEARANCE));
  if(!available.length)return false;
- const x=available[Math.floor(Math.random()*available.length)],good=Math.random()<.7;
+ const x=available[Math.floor(Math.random()*available.length)],good=lowCarbonDrops<5;
  const group=Art.icons.map((i,n)=>({...i,n})).filter(i=>i.good===good),icon=group[Math.floor(Math.random()*group.length)];
  items.push({x,y:-80,vy:(125+Math.random()*40+elapsed*.75)*fallScale(),angle:(Math.random()-.5)*.09,spin:(Math.random()-.5)*.035,n:icon.n,good,index:icon.index,hit:false});
+ lowCarbonDrops=good?lowCarbonDrops+1:0;
  return true;
 }
 function caught(item){score+=item.good?10:-10;catchBounce=1;updateHud();burst(item.x,item.y,item.good);floats.push({x:item.x,y:item.y-10,text:item.good?'+10':'−10',life:.9,good:item.good});sound(item.good?'good':'bad');if(!item.good)shake();}
@@ -68,10 +75,11 @@ function background(sceneW=W,sceneH=H){ctx.save();const scale=sceneW/1280;ctx.sc
  ctx.restore();for(const l of leaves){ctx.save();ctx.translate(l.x+Math.sin(clock*.5+l.p)*17,l.y);ctx.rotate(Math.sin(clock*.4+l.p));ctx.fillStyle='#8eb36860';ctx.beginPath();ctx.ellipse(0,0,l.s,l.s*.4,-.5,0,7);ctx.fill();ctx.restore();}
 }
 function drawItem(item){ctx.save();ctx.translate(item.x,item.y);ctx.rotate(item.angle);ctx.shadowColor='#54703730';ctx.shadowBlur=12;ctx.shadowOffsetY=5;const im=itemImages[item.n];if(im.complete&&im.naturalWidth){const width=144,height=width*im.naturalHeight/im.naturalWidth;ctx.drawImage(im,-width/2,52-height,width,height);}ctx.restore();}
-// 將道具的旋轉矩形轉換至頭部橢圓座標，檢查矩形與單位圓相交。
-// 碰撞區僅涵蓋海報小男生的頭髮與臉，不包含身體、手或籃子。
-function touchesHead(item,y,x){
- const headX=x+36,headY=H-192-catchBounce*8,rx=53,ry=49;
+// 道具旋轉矩形與角色各部位相交即接取，同一道具只計分一次。
+function touchesPlayer(item,y,x){
+ return PLAYER_PARTS.some(([cx,cy,rw,rh])=>touchesPart(item,y,x-PLAYER.width/2+cx*PLAYER.width,H-PLAYER.bottom-PLAYER.height-catchBounce*8+cy*PLAYER.height,rw*PLAYER.width,rh*PLAYER.height));
+}
+function touchesPart(item,y,headX,headY,rx,ry){
  const im=itemImages[item.n],ratio=im?.naturalWidth&&im?.naturalHeight?im.naturalHeight/im.naturalWidth:96/119;
  const height=144*ratio,c=Math.cos(item.angle),s=Math.sin(item.angle);
  const corners=[[-72,52-height],[72,52-height],[72,52],[-72,52]].map(([px,py])=>({x:(item.x+px*c-py*s-headX)/rx,y:(y+px*s+py*c-headY)/ry}));
@@ -84,13 +92,13 @@ function touchesHead(item,y,x){
  }
  return inside||nearest<=1;
 }
-function crossedHead(item,previousY,previousX){
+function crossedPlayer(item,previousY,previousX){
  const steps=Math.max(1,Math.ceil(Math.max(Math.abs(item.y-previousY),Math.abs(playerX-previousX))/12));
- for(let step=0;step<=steps;step++){const t=step/steps;if(touchesHead(item,previousY+(item.y-previousY)*t,previousX+(playerX-previousX)*t))return true;}
+ for(let step=0;step<=steps;step++){const t=step/steps;if(touchesPlayer(item,previousY+(item.y-previousY)*t,previousX+(playerX-previousX)*t))return true;}
  return false;
 }
 function render(){ctx.clearRect(0,0,W,H);background();if(state!=='landing'){
- ctx.fillStyle='#3e6f4c30';ctx.beginPath();ctx.ellipse(playerX+43,H-48,55,10,0,0,7);ctx.fill();if(playerImage.complete&&playerImage.naturalWidth)ctx.drawImage(playerImage,playerX-35,H-248-catchBounce*8,140,202);for(const item of items)drawItem(item);
+ ctx.fillStyle='#3e6f4c30';ctx.beginPath();ctx.ellipse(playerX,H-48,60,10,0,0,7);ctx.fill();if(playerImage.complete&&playerImage.naturalWidth)ctx.drawImage(playerImage,playerX-PLAYER.width/2,H-PLAYER.bottom-PLAYER.height-catchBounce*8,PLAYER.width,PLAYER.height);for(const item of items)drawItem(item);
  }for(const p of particles){ctx.globalAlpha=Math.max(0,p.life);ctx.fillStyle=p.color;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.life*5);ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size);ctx.restore();}ctx.globalAlpha=1;
  for(const f of floats){ctx.globalAlpha=Math.min(1,f.life*2);ctx.fillStyle=f.good?'#387b46':'#ce644e';ctx.strokeStyle='#ffffff';ctx.lineWidth=4;ctx.font='900 30px "Guardian Round", sans-serif';ctx.textAlign='center';ctx.strokeText(f.text,f.x,f.y);ctx.fillText(f.text,f.x,f.y);}ctx.globalAlpha=1;
 }
@@ -102,7 +110,7 @@ function tick(now){const dt=last?Math.min((now-last)/1000,.05):0;last=now;clock+
   if(bossIndex<2&&next>=(bossIndex+1)*20){elapsed=(bossIndex+1)*20;beginBoss();updateHud();}
   else if(next>=DURATION){elapsed=DURATION;updateHud();finish();}
   else{elapsed=next;const previousX=playerX;const dir=(keys.has('ArrowRight')||keys.has('d')?1:0)-(keys.has('ArrowLeft')||keys.has('a')?1:0);if(dir)targetX=Math.max(90,Math.min(W-110,targetX+dir*780*dt));playerX+=(targetX-playerX)*Math.min(1,dt*16);spawn-=dt;if(spawn<=0)spawn=spawnItem() ? .63+Math.random()*.28 : .12;
-   for(const item of items){const prev=item.y;item.vy+=6*fallScale()*dt;item.y+=item.vy*dt;item.angle=Math.max(-ITEM_MAX_TILT,Math.min(ITEM_MAX_TILT,item.angle+item.spin*dt));if(crossedHead(item,prev,previousX)){item.hit=true;caught(item);}}
+   for(const item of items){const prev=item.y;item.vy+=6*fallScale()*dt;item.y+=item.vy*dt;item.angle=Math.max(-ITEM_MAX_TILT,Math.min(ITEM_MAX_TILT,item.angle+item.spin*dt));if(crossedPlayer(item,prev,previousX)){item.hit=true;caught(item);}}
    items=items.filter(i=>!i.hit&&i.y<H+60);updateHud();
   }
  }else if(state==='boss'&&!answered){bossRemaining=Math.max(0,bossRemaining-dt);$('boss-seconds').textContent=Math.ceil(bossRemaining);if(bossRemaining<=0)answer(null);}
@@ -117,9 +125,9 @@ document.addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCa
 window.addEventListener('blur',()=>{keys.clear();pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
 $('start').onclick=reset;$('again').onclick=reset;$('restart').onclick=reset;$('pause').onclick=pause;$('resume').onclick=resume;$('quit').onclick=quit;$('true').onclick=()=>answer(true);$('false').onclick=()=>answer(false);$('boss-continue').onclick=continueBoss;
 $('sound').onclick=()=>{muted=!muted;$('sound').innerHTML=muted?'♪<span>音效關閉</span>':'♫<span>音效開啟</span>';$('sound').setAttribute('aria-label',muted?'開啟音效':'關閉音效');$('sound').setAttribute('aria-pressed',String(muted));syncMusic();if(!muted){initAudio();sound('good');}};
-$('open-guide').onclick=$('mobile-guide').onclick=()=>$('guide-dialog').showModal();$('resources').onclick=()=>$('resource-dialog').showModal();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
+$('open-guide').onclick=$('mobile-guide').onclick=()=>$('guide-dialog').showModal();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 // 遊戲座標隨可見畫面延伸，保持卡片與人物比例；直式落下距離增加時同步調整速度。
-function fallScale(){return Math.max(.5,(H-300)/420);}
+function fallScale(){return Math.max(.5,(H-300)/420)*.9;}
 function resize(){const rect=canvas.getBoundingClientRect(),aspect=rect.width>0&&rect.height>0?rect.width/rect.height:16/9;
  const nextW=720*Math.max(1,aspect),nextH=720/Math.min(1,aspect);
  if(Math.abs(nextW-W)>1||Math.abs(nextH-H)>1){const oldW=W,oldH=H;W=nextW;H=nextH;playerX=Math.max(90,Math.min(W-110,playerX/oldW*W));targetX=Math.max(90,Math.min(W-110,targetX/oldW*W));items=[];floats=[];particles=[];spawn=Math.max(spawn,.4);for(const leaf of leaves){leaf.x=leaf.x/oldW*W;leaf.y=leaf.y/oldH*H;}}

@@ -1,0 +1,60 @@
+/* 兩種結局：分數和文案維持可讀網頁文字，插圖依達標狀態切換。 */
+#result{display:flex;align-items:center;justify-content:safe center;padding:24px;overflow:auto;background:linear-gradient(145deg,#d6efabf2,#fffbdff7);gap:0}
+#result .ending-card{position:relative;isolation:isolate;flex-shrink:0;width:min(1120px,100%);display:grid;grid-template-columns:.9fr 1.1fr;align-items:center;border:6px solid #fff;border-radius:36px;padding:32px 36px 22px;box-shadow:0 18px 65px #245e3026;background:repeating-conic-gradient(from -15deg at 50% 80%,#ffffff00 0deg 14deg,#fffad448 14deg 28deg),radial-gradient(ellipse at 50% 45%,#ffffe5 0%,#e8f9bc 50%,#a2d862 100%);overflow:hidden}
+#result .ending-card::before,#result .ending-card::after{content:'';position:absolute;z-index:-1;bottom:-90px;width:75%;height:190px;border-radius:50%;background:#8dcd48;box-shadow:0 -18px 0 #b4df67;pointer-events:none}
+#result .ending-card::before{left:-20%;transform:rotate(10deg)}#result .ending-card::after{right:-25%;transform:rotate(-12deg);background:#a9d94c}
+.ending-summary{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+#result .ending-medal{font-size:58px;line-height:1.2;margin:0 0 6px;filter:drop-shadow(0 3px 0 #fff)}
+.ending-banner{background:#fffef2;border:3px solid #8fc86b;border-radius:16px 16px 28px 28px;padding:8px 30px;transform:rotate(-2deg);font-family:var(--font-display);font-weight:900;font-size:38px;line-height:1.3;color:#105522;box-shadow:0 4px 0 #7eae4820}
+#result .ending-caption{font-size:22px;font-weight:700;line-height:1.6;margin:20px 0 2px;color:#285a26}
+#result .final-score{white-space:nowrap;line-height:1.1;margin:3px 0 15px}
+#result .final-score b{font-size:clamp(78px,9vw,126px);line-height:1.15;color:#166311;letter-spacing:-2px;text-shadow:0 4px 0 #fff,3px 0 0 #fff,-3px 0 0 #fff}
+#result .final-score span{font-size:28px;font-weight:900;color:#205723}
+#result .ending-title{position:relative;max-width:100%;font-size:30px;line-height:1.5;letter-spacing:1px;margin:0;padding:8px 24px;color:#fff;background:linear-gradient(#5da90d,#277f08);border-radius:12px;box-shadow:0 6px 0 #236e12,0 10px 18px #285e1920;text-shadow:0 2px 0 #175313;transform:rotate(-2deg)}
+#result.is-win .ending-title{font-size:28px}
+.ending-scene{position:relative;display:flex;align-items:flex-end;justify-content:flex-start;min-width:0;min-height:430px;align-self:stretch;padding-top:20px}
+.ending-bear{display:block;position:relative;width:65%;height:400px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 8px 1px #4b841d24);animation:ending-bob 3s ease-in-out infinite;align-self:flex-end;z-index:1}
+.ending-bubble{position:absolute;top:32%;right:0;width:52%;padding:16px 20px 18px;background:#fffde7;border:3px solid #87bc35;border-radius:32px 32px 32px 9px;box-shadow:0 5px 0 #8cae3e15;z-index:2;transform:rotate(2deg)}
+.ending-cheer{display:block;color:#a14715;font-family:var(--font-display);font-size:28px;font-weight:900;line-height:1.4}
+#result-message{margin:9px 0 0;font-size:22px;line-height:1.65;font-weight:700;color:#175923}
+#result .reward{display:block;width:auto;max-width:none;border:0;border-top:2px dashed #ebc141;background:none;border-radius:0;padding:10px 0 0;margin:10px 0 0}
+#result .reward strong{display:block;color:#b45713;font-size:20px}
+#result .reward small{display:block;font-size:18px;line-height:1.6;margin-top:4px}
+#result.is-win .ending-bubble{border-color:#e5bd23;background:#fff8d5}
+.ending-actions{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:28px;z-index:2;margin-top:28px}
+#result .ending-actions .primary-button{width:300px;max-width:100%;margin:0;min-height:56px;font-size:23px;background:#286e34;box-shadow:0 5px 0 #174e24}
+#result .resources{max-width:none;width:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin:0}
+#result .resources img{width:64px;height:50px;object-fit:contain}
+#result .resources button{font-size:18px;line-height:1.5}
+@keyframes ending-bob{50%{transform:translateY(-5px) rotate(1deg)}}
+@media(max-width:700px){
+ #result{padding:12px}
+ #result .ending-card{grid-template-columns:1fr;padding:20px 14px 18px;border-width:4px;border-radius:28px;max-width:540px}
+ #result .ending-medal{font-size:43px;margin-bottom:2px}.ending-banner{font-size:30px;padding:6px 28px}
+ #result .ending-caption{font-size:19px;margin-top:12px}#result .final-score{margin-bottom:8px}#result .final-score b{font-size:80px}#result .final-score span{font-size:24px}
+ #result .ending-title,#result.is-win .ending-title{font-size:26px;padding:5px 18px}
+ .ending-scene{min-height:320px;padding-top:10px;margin-top:18px}.ending-bear{height:300px;width:70%;margin-right:0}
+ .ending-bubble{top:40%;width:52%;padding:12px 14px;right:0;border-radius:24px 24px 24px 8px}.ending-cheer{font-size:24px}#result-message{font-size:19px;line-height:1.6;margin-top:5px}
+ #result .reward strong{font-size:18px}#result .reward small{display:none;font-size:17px}
+ .ending-actions{flex-direction:column;gap:16px;margin-top:18px}#result .ending-actions .primary-button{width:100%;font-size:22px}
+ #result .resources{gap:12px}#result .resources img{width:48px;height:38px}#result .resources button{font-size:17px}
+}
+@media(max-height:600px) and (min-width:701px){
+ #result{padding:10px}#result .ending-card{padding:18px 24px 14px;border-radius:26px;max-width:1000px}
+ #result .ending-medal{font-size:34px}.ending-banner{font-size:28px}#result .ending-caption{font-size:18px;margin-top:10px}#result .final-score b{font-size:76px}#result .ending-title,#result.is-win .ending-title{font-size:24px}
+ .ending-scene{min-height:270px;padding-top:70px}.ending-bear{height:240px}.ending-bubble{padding:10px 14px}.ending-cheer{font-size:23px}#result-message{font-size:18px}#result .reward small{font-size:17px}
+ .ending-actions{margin-top:16px}#result .ending-actions .primary-button{min-height:48px;font-size:21px}
+}
+@media(prefers-reduced-motion:reduce){.ending-bear{animation:none}}
+/* 兩種結局皆為左側小熊、右側分數，重新開始置中。 */
+#result .ending-card{grid-template-columns:1.1fr .9fr}
+.ending-scene{grid-column:1;grid-row:1}
+.ending-summary{grid-column:2;grid-row:1}
+#result .ending-title{transform:none;background:none;border:0;border-radius:0;box-shadow:none;text-shadow:none;color:#175923;padding:8px 0}
+.ending-actions{justify-content:center}
+@media(max-width:700px){
+ #result .ending-card{grid-template-columns:1fr}
+ .ending-summary{grid-column:1;grid-row:1}
+ .ending-scene{grid-column:1;grid-row:2}
+ .ending-actions{grid-row:3}
+}
