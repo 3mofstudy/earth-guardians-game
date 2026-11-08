@@ -33,6 +33,6 @@ const Art = (() => {
 document.getElementById('hero-art').innerHTML = Art.hero;
 for (const good of [true,false]) {
   const cards=Art.icons.filter(i=>i.good===good);
-  document.getElementById(good?'good-gallery':'bad-gallery').innerHTML=cards.map(i=>`<figure><img src="${i.src}" alt="${i.name}" width="119" height="96"></figure>`).join('');
-  document.getElementById(good?'home-good':'home-bad').innerHTML=cards.map(i=>`<figure><img src="${i.src}" alt="${i.name}，${good?'低碳寶物，接住加十分':'高污染物，接住扣十分'}" draggable="false"></figure>`).join('');
+  document.getElementById(good?'good-gallery':'bad-gallery').innerHTML=cards.map(i=>`<figure><img src="${window.SiteVersion?.url(i.src)||i.src}" alt="${i.name}" width="119" height="96"></figure>`).join('');
+  document.getElementById(good?'home-good':'home-bad').innerHTML=cards.map(i=>`<figure><img src="${window.SiteVersion?.url(i.src)||i.src}" alt="${i.name}，${good?'低碳寶物，接住加十分':'高污染物，接住扣十分'}" draggable="false"></figure>`).join('');
 }

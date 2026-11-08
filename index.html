@@ -4,13 +4,15 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#164d38"><meta name="description" content="加入地球守護隊！60 秒收集綠能寶物、閃避污染，挑戰氣候知識魔王。">
   <title>地球守護隊｜綠能接接樂</title>
-  <link rel="preload" href="assets/fonts/guardian-text.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/guardian-round-heavy.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="style.css?v=20261108-topic-buttons"><link rel="stylesheet" href="landscape.css?v=20261108-topic-buttons"><link rel="stylesheet" href="mission.css?v=20261108-topic-buttons"><link rel="stylesheet" href="typography.css?v=20261108-topic-buttons"><link rel="stylesheet" href="responsive.css?v=20261108-topic-buttons">
-<link rel="stylesheet" href="endings.css?v=20261103-endings4">
+  <link rel="preload" href="assets/fonts/guardian-text.woff2?v=1c237be509cc496b" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/guardian-round-heavy.woff2?v=1c237be509cc496b" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css?v=1c237be509cc496b"><link rel="stylesheet" href="landscape.css?v=1c237be509cc496b"><link rel="stylesheet" href="mission.css?v=1c237be509cc496b"><link rel="stylesheet" href="typography.css?v=1c237be509cc496b"><link rel="stylesheet" href="responsive.css?v=1c237be509cc496b">
+<link rel="stylesheet" href="endings.css?v=1c237be509cc496b">
+  <meta name="site-version" content="1c237be509cc496b">
+  <script src="cache-refresh.js?v=1c237be509cc496b"></script>
 </head>
 <body class="at-home">
-<header class="site-header"><a class="brand" href="./" aria-label="ICDI 國際氣候發展智庫首頁"><img class="brand-logo" src="assets/icdi-logo.png" alt="ICDI 國際氣候發展智庫" width="120" height="94"></a><h1 class="site-title">綠能接接樂</h1><button id="sound" class="icon-button" aria-label="關閉音效" aria-pressed="false">♫<span>音效開啟</span></button></header>
+<header class="site-header"><a class="brand" href="./" aria-label="ICDI 國際氣候發展智庫首頁"><img class="brand-logo" src="assets/icdi-logo.png?v=1c237be509cc496b" alt="ICDI 國際氣候發展智庫" width="120" height="94"></a><h1 class="site-title">綠能接接樂</h1><button id="sound" class="icon-button" aria-label="關閉音效" aria-pressed="false">♫<span>音效開啟</span></button></header>
 <main class="layout">
   <section class="intro">
     <div class="eyebrow"><span>MISSION 01</span> 小小行動，大大改變</div>
@@ -27,8 +29,8 @@
       <canvas id="game" width="1280" height="720" tabindex="0" aria-label="使用左右方向鍵、滑鼠或觸控移動角色"></canvas>
       <div class="hud" id="hud" hidden><div><small>綠能積分</small><b id="score">0</b><span> / 300</span></div><div class="timer"><small>剩餘時間</small><b id="time">60</b><span>秒</span></div><button id="pause" aria-label="暫停遊戲">Ⅱ</button><div class="progress"><i id="progress"></i></div></div>
       <section id="landing" class="screen landing">
-        <div class="home-heading"><div class="home-reward"><img src="assets/ending-win.png" alt="拿著禮物慶祝的淨零小熊"><div><strong>積分滿300</strong><span>贈送精美小禮物</span></div></div><div class="home-instructions"><b>↔ 滑鼠左右移動，或按 ← → / A D 移動淨零小熊，碰到小熊任一部位就計分</b><span>⚡ 第 20、40 秒迎戰魔王挑戰題，10 秒內作答！答對 +20，答錯 −20。</span><small>手機、平板可左右拖曳 · 國際氣候發展智庫（ICDI）</small></div><div id="hero-art" class="hero-art" hidden></div></div>
-        <div class="education-panels"><section class="education-panel low-carbon"><div class="education-heading"><div><h3>綠能低碳寶物</h3><p>節能、減少浪費，讓地球更涼快！</p></div><strong>接住 +10 分</strong></div><div id="home-good" class="poster-grid"></div></section><section class="education-panel high-carbon"><div class="education-heading"><div><h3>高碳污染怪獸</h3><p>排放、污染和浪費，這些要閃開！</p></div><strong>閃避 −10 分</strong></div><div id="home-bad" class="poster-grid"></div></section><section class="education-panel boss-education" aria-label="魔王挑戰遊戲規則"><div class="education-heading"><div><h3>⚡ 魔王挑戰題</h3><p>點選下方主題認識氣候知識</p></div><strong>答對 +20 分</strong></div><div class="poster-grid boss-guide-grid"><a class="boss-topic-button" href="building-energy.html" target="_blank" rel="noopener noreferrer" aria-label="建築節能（進一步學習，另開分頁）"><span>建築節能 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><a class="boss-topic-button" href="biodiversity.html" target="_blank" rel="noopener noreferrer" aria-label="生物多樣性（進一步學習，另開分頁）"><span>生物多樣性 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><a class="boss-topic-button climate-topic-button" href="climate-risk.html" target="_blank" rel="noopener noreferrer" aria-label="氣候風險（進一步學習，另開分頁）"><span>氣候風險 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><div class="boss-guide-rules"><h4>魔王來了，怎麼辦？</h4><ol><li>第 <b>20、40 秒</b>出題，提前 <b>3 秒</b>特效預告。</li><li>暫停掉落與遊戲計時，<b>10 秒內</b>選出答案：建築節能為<b>三選一</b>，其他題目按下 <b>○ 正確</b>或 <b>× 錯誤</b>。</li><li><b>答對 +20 分</b>，答錯或逾時 <b>−20 分</b>。</li><li>看完解說後，<b>點選任意畫面</b>繼續挑戰！</li></ol></div></div></section></div>
+        <div class="home-heading"><div class="home-reward"><img src="assets/ending-win.png?v=1c237be509cc496b" alt="拿著禮物慶祝的淨零小熊"><div><strong>積分滿300</strong><span>贈送精美小禮物</span></div></div><div class="home-instructions"><b>↔ 滑鼠左右移動，或按 ← → / A D 移動淨零小熊，碰到小熊任一部位就計分</b><span>⚡ 第 20、40 秒迎戰魔王挑戰題，10 秒內作答！答對 +20，答錯 −20。</span><small>手機、平板可左右拖曳 · 國際氣候發展智庫（ICDI）</small></div><div id="hero-art" class="hero-art" hidden></div></div>
+        <div class="education-panels"><section class="education-panel low-carbon"><div class="education-heading"><div><h3>綠能低碳寶物</h3><p>節能、減少浪費，讓地球更涼快！</p></div><strong>接住 +10 分</strong></div><div id="home-good" class="poster-grid"></div></section><section class="education-panel high-carbon"><div class="education-heading"><div><h3>高碳污染怪獸</h3><p>排放、污染和浪費，這些要閃開！</p></div><strong>閃避 −10 分</strong></div><div id="home-bad" class="poster-grid"></div></section><section class="education-panel boss-education" aria-label="魔王挑戰遊戲規則"><div class="education-heading"><div><h3>⚡ 魔王挑戰題</h3><p>點選下方主題認識氣候知識</p></div><strong>答對 +20 分</strong></div><div class="poster-grid boss-guide-grid"><a class="boss-topic-button" href="building-energy.html?v=1c237be509cc496b" target="_blank" rel="noopener noreferrer" aria-label="建築節能（進一步學習，另開分頁）"><span>建築節能 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><a class="boss-topic-button" href="biodiversity.html?v=1c237be509cc496b" target="_blank" rel="noopener noreferrer" aria-label="生物多樣性（進一步學習，另開分頁）"><span>生物多樣性 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><a class="boss-topic-button climate-topic-button" href="climate-risk.html?v=1c237be509cc496b" target="_blank" rel="noopener noreferrer" aria-label="氣候風險（進一步學習，另開分頁）"><span>氣候風險 <small>(進一步學習)</small></span><span aria-hidden="true">↗</span></a><div class="boss-guide-rules"><h4>魔王來了，怎麼辦？</h4><ol><li>第 <b>20、40 秒</b>出題，提前 <b>3 秒</b>特效預告。</li><li>暫停掉落與遊戲計時，<b>10 秒內</b>選出答案：建築節能為<b>三選一</b>，其他題目按下 <b>○ 正確</b>或 <b>× 錯誤</b>。</li><li><b>答對 +20 分</b>，答錯或逾時 <b>−20 分</b>。</li><li>看完解說後，<b>點選任意畫面</b>繼續挑戰！</li></ol></div></div></section></div>
         <div class="home-bottom"><button id="start" class="primary-button">開始遊戲 <span>↗</span></button><button id="mobile-guide" hidden>查看圖鑑</button></div>
       </section>
       <section id="countdown" class="screen countdown" hidden><span>準備好加入地球守護隊</span><b id="count-number">3</b><p>左右移動，用小熊接綠能，閃開污染！</p></section>
@@ -38,7 +40,7 @@
       <section id="result" class="screen result" hidden aria-label="守護任務結算">
         <div class="ending-card">
           <div class="ending-summary"><div id="result-medal" class="ending-medal" aria-hidden="true">🏅</div><div class="ending-banner">任務完成！</div><p class="ending-caption">本次守護行動，收集了</p><div class="final-score"><b id="final-score">0</b><span>分</span></div><h2 id="result-title" class="ending-title"></h2></div>
-          <div class="ending-scene"><img id="ending-bear" class="ending-bear" src="assets/ending-encourage.png" alt="揮手鼓勵的淨零小熊" width="480" height="600"><div class="ending-bubble"><span id="ending-cheer" class="ending-cheer">再試一次！</span><p id="result-message"></p><div id="reward" class="reward"><strong>🎁 達標獎勵</strong><small>請向現場工作人員出示本畫面。</small></div></div></div>
+          <div class="ending-scene"><img id="ending-bear" class="ending-bear" src="assets/ending-encourage.png?v=1c237be509cc496b" alt="揮手鼓勵的淨零小熊" width="480" height="600"><div class="ending-bubble"><span id="ending-cheer" class="ending-cheer">再試一次！</span><p id="result-message"></p><div id="reward" class="reward"><strong>🎁 達標獎勵</strong><small>請向現場工作人員出示本畫面。</small></div></div></div>
           <div class="ending-actions"><button id="again" class="primary-button">回到首頁 <span>⌂</span></button></div>
         </div>
       </section>
@@ -52,6 +54,6 @@
 <dialog id="guide-dialog"><div class="modal-header"><div><span class="eyebrow">FIELD GUIDE</span><h2>守護隊圖鑑</h2></div><button class="close-button" data-close aria-label="關閉圖鑑">×</button></div><p>認識海報上的道具：接住低碳寶物，閃開高污染物！</p><h3 class="positive">綠能低碳寶物 · +10 分</h3><div id="good-gallery" class="gallery"></div><h3 class="negative">高碳污染怪獸 · −10 分</h3><div id="bad-gallery" class="gallery"></div></dialog>
 
 
-<audio id="bgm" src="assets/audio/marimba-adventure.mp3" preload="auto" loop></audio>
-<script src="art.js"></script><script src="game.js"></script>
+<audio id="bgm" src="assets/audio/marimba-adventure.mp3?v=1c237be509cc496b" preload="auto" loop></audio>
+<script src="art.js?v=1c237be509cc496b"></script><script src="game.js?v=1c237be509cc496b"></script>
 </body></html>

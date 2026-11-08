@@ -1,7 +1,7 @@
 /* 自帶繁體中文免費圓體，不依賴外部字型服務。 */
-@font-face{font-family:'Guardian Text';src:url('assets/fonts/guardian-text.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
-@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-bold.woff2') format('woff2');font-style:normal;font-weight:600 800;font-display:swap}
-@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-heavy.woff2') format('woff2');font-style:normal;font-weight:900;font-display:swap}
+@font-face{font-family:'Guardian Text';src:url('assets/fonts/guardian-text.woff2?v=1c237be509cc496b') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
+@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-bold.woff2?v=1c237be509cc496b') format('woff2');font-style:normal;font-weight:600 800;font-display:swap}
+@font-face{font-family:'Guardian Round';src:url('assets/fonts/guardian-round-heavy.woff2?v=1c237be509cc496b') format('woff2');font-style:normal;font-weight:900;font-display:swap}
 :root{--font-text:'Guardian Text','Microsoft JhengHei','PingFang TC',sans-serif;--font-display:'Guardian Round','Guardian Text','Microsoft JhengHei',sans-serif}
 body{font-family:var(--font-text);font-weight:400;font-synthesis:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 button,input,select,textarea{font-family:inherit}

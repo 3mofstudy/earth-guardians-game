@@ -14,8 +14,8 @@ const questions=[
  {category:'氣候風險',text:'在氣候風險中，「暴露度」是指有很多居民、學校、房子和馬路剛好位在容易淹水或土石流等危險區域內，請問是否正確？',answer:true,explanation:'沒錯！當人與物資都在危險地盤（暴露度高），災情就會更嚴重！'}
 ];
 let state='landing',score=0,elapsed=0,spawn=0,stageTime=0,bossIndex=0,bossRemaining=BOSS_DURATION,answered=false,selectedQuestions=[],items=[],particles=[],floats=[],playerX=225,targetX=225,clock=0,last=0,returnState='playing',keys=new Set(),muted=false,audio=null,catchBounce=0,warningSecond=0;
-const itemImages=Art.icons.map(i=>{const im=new Image();im.src=i.src;return im;});
-const playerImage=new Image();playerImage.src='assets/player-bear.png';
+const itemImages=Art.icons.map(i=>{const im=new Image();im.src=window.SiteVersion?.url(i.src)||i.src;return im;});
+const playerImage=new Image();playerImage.src=window.SiteVersion?.url('assets/player-bear.png')||'assets/player-bear.png';
 // 原圖 2913 × 3600 等比例縮小；顯示範圍與頭部碰撞使用相同座標基準。
 const PLAYER_SCALE=.9;
 const PLAYER={width:180*PLAYER_SCALE,height:180*3600/2913*PLAYER_SCALE,bottom:46};
@@ -45,7 +45,7 @@ function continueBoss(){if(state!=='boss'||!answered)return false;bossIndex++;an
 function pause(){if(!['playing','boss','countdown'].includes(state))return;returnState=state;screen('paused');keys.clear();}
 function resume(){if(state!=='paused')return;initAudio();screen(returnState);}
 function quit(){lowCarbonDrops=0;items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;bossIndex=0;stageTime=0;bossRemaining=BOSS_DURATION;answered=false;selectedQuestions=[];catchBounce=0;screen('landing');bgm.currentTime=0;updateHud();$('start').focus({preventScroll:true});}
-function finish(){items=[];keys.clear();screen('result');$('final-score').textContent=score;const win=score>=300;$('result').classList.toggle('is-win',win);$('result-medal').textContent=win?'🏅':'🌱';$('result-title').textContent=win?'超級氣候小專家':'再接再厲';$('ending-bear').src=win?'assets/ending-win.png':'assets/ending-encourage.png';$('ending-bear').alt=win?'拿著禮物慶祝的淨零小熊':'揮手加油、鼓勵再挑戰的淨零小熊';$('ending-cheer').textContent=win?'恭喜你！':'再試一次！';$('result-message').textContent=win?'積分達 300 分以上，現場送精美小禮物！':'一起挑戰 300 分！下次一定更厲害！';show('reward',win);sound(win?'win':'good');if(win)burst(W/2,150,true,65);$('again').focus({preventScroll:true});}
+function finish(){items=[];keys.clear();screen('result');$('final-score').textContent=score;const win=score>=300;$('result').classList.toggle('is-win',win);$('result-medal').textContent=win?'🏅':'🌱';$('result-title').textContent=win?'超級氣候小專家':'再接再厲';const endingSrc=win?'assets/ending-win.png':'assets/ending-encourage.png';$('ending-bear').src=window.SiteVersion?.url(endingSrc)||endingSrc;$('ending-bear').alt=win?'拿著禮物慶祝的淨零小熊':'揮手加油、鼓勵再挑戰的淨零小熊';$('ending-cheer').textContent=win?'恭喜你！':'再試一次！';$('result-message').textContent=win?'積分達 300 分以上，現場送精美小禮物！':'一起挑戰 300 分！下次一定更厲害！';show('reward',win);sound(win?'win':'good');if(win)burst(W/2,150,true,65);$('again').focus({preventScroll:true});}
 function shake(){const shell=$('game-shell');shell.classList.remove('shake');void shell.offsetWidth;shell.classList.add('shake');}
 function burst(x,y,good,count=16){for(let i=0;i<count;i++)particles.push({x,y,vx:(Math.random()-.5)*230,vy:-80-Math.random()*180,life:.65+Math.random()*.4,max:1,color:good?['#f5cf58','#8dbe69','#fff7c5'][i%3]:['#e79172','#efbb8e'][i%2],size:3+Math.random()*5});}
 function spawnItem(){

@@ -122,3 +122,13 @@ const nextH = 720 / Math.min(1, aspect);
 頁面加入 `video/生物多樣性_小熊帶你認識.mp4`，支援播放、暫停、進度拖曳與全螢幕；手機可在頁面內觀看。影片不自動播放，隨專案 ZIP 打包，部署時請一併上傳 `video` 資料夾。
 
 首頁「生物多樣性（進一步學習）」另開 `biodiversity.html`，介紹基因、物種、生態系三個層次，以及多樣性與森林抵抗、恢復能力的關係，搭配不計分的是非題練習，呼應遊戲題目。頁面也介紹農業部生物多樣性研究所、南投集集的保育教育館，以及 TBN 物種查詢和教學資源，附官方連結。教材以農業部文章為基礎，森林韌性另參考 CBD Technical Series No. 43，避免將多樣性解釋為一定不受災害影響。樣式與互動為 `biodiversity.css`、`biodiversity.js`，均隨 ZIP 打包。
+
+## 自動檢查網站更新
+
+`cache-refresh.js` 會在開啟頁面、切回分頁及每 60 秒，以 `cache: no-store` 檢查 `site-version.json`。發現不同版本時，以新網址重新載入；遊戲進行、暫停、魔王題或結算中會等回到首頁才更新，影片播放中也會延後更新。離線或檢查失敗不影響使用，並有重新載入次數保護，避免部署未同步時不斷重整。
+
+此功能處理的是瀏覽器快取，不清除 Cookie，也不能刪除整個瀏覽器或其他網站的快取。`tools/version-assets.py` 依網站內容產生版本，替 HTML、程式、樣式、字型、圖片與影片網址加上版本參數；動態遊戲圖片透過 `SiteVersion.url()` 使用相同版本。
+
+每次修改完成、上傳 GitHub 前，執行 `python tools/package.py`，會自動更新版本並打包。請把產生的 `site-version.json`、`cache-refresh.js` 及所有變更一起提交上傳。也可只執行 `python tools/version-assets.py` 更新版本。GitHub Pages 仍須完成部署；首次導入此功能時，原本已停留在不含檢查程式的舊頁面，可能需要手動重新整理一次。
+
+檢查：`node tools/test-cache-refresh.cjs`。
