@@ -6,7 +6,7 @@ sys.path.insert(0, str(root / 'tools' / 'font-deps'))
 from fontTools.ttLib import TTFont
 from fontTools import subset
 
-text = ''.join((root / name).read_text(encoding='utf-8') for name in ('index.html', 'game.js', 'art.js'))
+text = ''.join((root / name).read_text(encoding='utf-8') for name in ('index.html', 'biodiversity.html', 'biodiversity.js', 'building-energy.html', 'building-energy.js', 'climate-risk.html', 'climate-risk.js', 'game.js', 'art.js'))
 codepoints = {ord(char) for char in text} | set(range(0x20, 0x100)) | {0x3000, 0xFF0C, 0x3002, 0xFF01, 0xFF1F, 0x2212, 0x2190, 0x2192, 0x25CB, 0xD7}
 cjk = {point for point in codepoints if 0x3400 <= point <= 0x9FFF}
 families = [

@@ -1,4 +1,16 @@
 /* 任務開始後使用裝置可視區域，包含手機瀏海與底部手勢安全距離。 */
+.boss-education .boss-guide-grid{display:flex;flex-direction:column;gap:12px;min-height:0;justify-content:flex-start}
+.boss-topic-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;min-height:62px;padding:12px 16px;border:2px solid #b7ce77;border-radius:15px;background:#fffef2;color:#365d2c;font-family:var(--font-display);font-size:24px;font-weight:700;text-align:left;text-decoration:none;box-shadow:0 3px 0 #c2cf8c;line-height:1.5;touch-action:manipulation}
+.boss-topic-button:hover{background:#f1f7d3;border-color:#628b41}.boss-topic-button:focus-visible{outline:4px solid #b4821a;outline-offset:3px}
+.boss-topic-button small{font-family:var(--font-text);font-size:18px;font-weight:400}
+.boss-topic-button>span:last-child{flex-shrink:0}
+.boss-education .boss-guide-rules{margin-top:14px;flex:1;padding-top:8px}
+#topic-dialog{max-width:600px}#topic-dialog h2{font-size:30px}#topic-dialog>p{font-size:22px;line-height:1.9}#topic-dialog .primary-button{font-size:21px;min-height:52px}
+@media(max-width:600px){.boss-topic-button{font-size:22px;padding:12px}.boss-topic-button small{font-size:18px}.boss-education .boss-guide-grid{gap:14px}.boss-education{min-height:0}}
+.climate-guide-link{position:relative;display:block;width:100%;height:100%;border-radius:16px;transition:filter .15s}
+.climate-guide-link:hover{filter:drop-shadow(0 0 5px #5d904b)}
+.climate-guide-link:focus-visible{outline:4px solid #bd8a1f;outline-offset:4px}
+.climate-guide-link>span{position:absolute;top:3px;right:3px;width:28px;height:28px;display:grid;place-items:center;background:#286e34;color:#fff;border:2px solid white;border-radius:50%;font-size:20px;line-height:1;pointer-events:none}
 body{font-size:17px;line-height:1.6}
 body:not(.at-home){overflow:hidden;height:100dvh}
 body:not(.at-home) .site-header{display:none}
@@ -21,6 +33,12 @@ body:not(.at-home) #sound span{display:none}
 .boss-time{display:flex;margin:10px auto}.boss-time span{font-size:32px}.boss-time small{font-size:17px}
 .boss-alert{font-size:17px;padding:9px}.boss .dialog-kicker{font-size:17px}
 .answer-buttons{max-width:420px;gap:16px}.answer-buttons button{font-size:52px;min-height:85px;padding:8px}.answer-buttons span{font-size:17px;padding:4px}
+.boss .choice-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));max-width:520px;gap:12px}
+.boss .choice-answers[hidden]{display:none}
+.boss .choice-answers button{min-width:0;min-height:80px;font-family:var(--font-display);font-size:clamp(23px,4vw,36px);font-weight:900;color:#28593c;background:#fff8d6;border:2px solid #c4ad50;border-radius:18px;box-shadow:0 4px 0 #beaa62}
+.boss .choice-answers button:hover{background:#f8eaa4}
+.boss .choice-answers button:focus-visible{outline:4px solid #397546;outline-offset:4px}
+@media(max-width:500px){.boss .choice-answers{gap:10px}.boss .choice-answers button{font-size:24px;min-height:65px;padding:8px 4px}}
 .dialog p{font-size:17px;line-height:1.8}.boss-continue{font-size:17px;padding:13px 16px}
 .countdown b{font-size:100px}.countdown span,.countdown p{font-size:17px;padding:0 16px}
 .result{display:flex;justify-content:safe center;overflow:auto;padding:max(24px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(24px,env(safe-area-inset-left));gap:8px}

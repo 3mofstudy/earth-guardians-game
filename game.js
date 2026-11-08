@@ -9,7 +9,7 @@ const ITEM_MAX_TILT=.12,ITEM_CLEARANCE=176;
 const bgm=$('bgm');bgm.volume=.28;
 document.body.append($('landing'));
 const questions=[
- {category:'建築節能',text:'夏天吹冷氣時，室內溫度設定在 26–28 度並搭配電風扇，相對節能又涼快，對不對？',answer:true,explanation:'冷氣每調高 1 度就能省約 6% 的電喔！'},
+ {category:'建築節能',text:'夏天在家開冷氣時，將室內溫度設定為多少攝氏度，並搭配電風扇，能既節電又舒適？',options:['24°C','26°C','28°C'],answer:'26°C',explanation:'冷氣設定 26°C，搭配電風扇，兼顧節能與舒適！26–28°C 都在官方建議範圍內，本題以 26°C 作為節能設定的記憶重點。'},
  {category:'生物多樣性',text:'一座森林裡如果住著鳥類、青蛙、蜜蜂和許多不同種類的動植物（生物多樣性高），面對乾旱或病蟲害時，會比只有單一種樹木的森林更有抵抗力，對不對？',answer:true,explanation:'物種越豐富多元，大自然的抗災免疫力就越強！'},
  {category:'氣候風險',text:'在氣候風險中，「暴露度」是指有很多居民、學校、房子和馬路剛好位在容易淹水或土石流等危險區域內，請問是否正確？',answer:true,explanation:'沒錯！當人與物資都在危險地盤（暴露度高），災情就會更嚴重！'}
 ];
@@ -39,8 +39,8 @@ function initAudio(){if(!audio){const AC=window.AudioContext||window.webkitAudio
 function tone(frequency,duration,type='sine',volume=.055,delay=0){if(!audio||muted||audio.state!=='running')return;const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(frequency,t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(volume,t+.012);g.gain.exponentialRampToValueAtTime(.001,t+duration);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+duration+.02);}
 function sound(kind){if(kind==='good'){tone(660,.16);tone(990,.24,'sine',.05,.1);}else if(kind==='bad'){tone(140,.2,'triangle',.075);tone(95,.23,'triangle',.06,.08);}else if(kind==='boss'){[392,523,659,523].forEach((f,i)=>tone(f,.19,'triangle',.07,i*.12));}else if(kind==='win'){[523,659,784,1046].forEach((f,i)=>tone(f,.3,'sine',.07,i*.13));}else tone(490,.1);}
 function reset(){lowCarbonDrops=0;initAudio();bgm.pause();bgm.currentTime=0;items=[];particles=[];floats=[];keys.clear();score=0;elapsed=0;spawn=.55;bossIndex=0;stageTime=0;playerX=targetX=W/2;selectedQuestions=[...questions].sort(()=>Math.random()-.5).slice(0,2);updateHud();$('count-number').textContent='3';screen('countdown');sound('tick');}
-function beginBoss(){items=[];floats=[];bossRemaining=BOSS_DURATION;answered=false;const q=selectedQuestions[bossIndex];$('question').textContent=q.text;$('boss-category').textContent=q.category;$('boss-seconds').textContent=String(BOSS_DURATION);show('boss-clock',true);show('boss-feedback',false);document.querySelector('.answer-buttons').hidden=false;screen('boss');sound('boss');$('true').focus({preventScroll:true});}
-function answer(value){if(state!=='boss'||answered)return;answered=true;stageTime=0;const q=selectedQuestions[bossIndex],correct=value===q.answer;score+=correct?20:-20;updateHud();document.querySelector('.answer-buttons').hidden=true;show('boss-clock',false);show('boss-feedback',true);$('feedback-title').textContent=correct?'太棒了！🎉 成功防禦氣候危機！':value===null?'時間到！⚠️ 危機擴大了！':'哎呀！⚠️ 危機擴大了！';$('explanation').textContent=`正確答案：○ 正確。${q.explanation}`;$('boss-points').textContent=correct?'+20 分':'−20 分';$('boss-points').style.color=correct?'#438052':'#d16c53';sound(correct?'win':'bad');if(correct)burst(W/2,320,true,35);else shake();$('boss-continue').focus({preventScroll:true});}
+function beginBoss(){items=[];floats=[];bossRemaining=BOSS_DURATION;answered=false;const q=selectedQuestions[bossIndex];$('question').textContent=q.text;$('boss-category').textContent=q.category;$('boss-seconds').textContent=String(BOSS_DURATION);show('boss-clock',true);show('boss-feedback',false);show('boolean-answers',!q.options);show('choice-answers',!!q.options);$('boss-round-title').textContent=q.options?'⚡ 魔王選擇題時間':'⚡ 魔王是非題時間';if(q.options)q.options.forEach((option,index)=>{$(`choice-${index}`).textContent=option;});screen('boss');sound('boss');$(q.options?'choice-0':'true').focus({preventScroll:true});}
+function answer(value){if(state!=='boss'||answered)return;answered=true;stageTime=0;const q=selectedQuestions[bossIndex],correct=value===q.answer;score+=correct?20:-20;updateHud();show('boolean-answers',false);show('choice-answers',false);show('boss-clock',false);show('boss-feedback',true);$('feedback-title').textContent=correct?'太棒了！🎉 成功防禦氣候危機！':value===null?'時間到！⚠️ 危機擴大了！':'哎呀！⚠️ 危機擴大了！';$('explanation').textContent=`正確答案：${q.options?q.answer:q.answer?'○ 正確':'× 錯誤'}。${q.explanation}`;$('boss-points').textContent=correct?'+20 分':'−20 分';$('boss-points').style.color=correct?'#438052':'#d16c53';sound(correct?'win':'bad');if(correct)burst(W/2,320,true,35);else shake();$('boss-continue').focus({preventScroll:true});}
 function continueBoss(){if(state!=='boss'||!answered)return false;bossIndex++;answered=false;stageTime=0;spawn=.6;keys.clear();initAudio();screen('playing');canvas.focus({preventScroll:true});return true;}
 function pause(){if(!['playing','boss','countdown'].includes(state))return;returnState=state;screen('paused');keys.clear();}
 function resume(){if(state!=='paused')return;initAudio();screen(returnState);}
@@ -56,7 +56,7 @@ function spawnItem(){
  const positions=Array.from({length:lanes},(_,i)=>margin+i*180+(Math.random()-.5)*4);
  const available=positions.filter(x=>items.every(item=>Math.abs(item.x-x)>=ITEM_CLEARANCE));
  if(!available.length)return false;
- const x=available[Math.floor(Math.random()*available.length)],good=lowCarbonDrops<5;
+ const x=available[Math.floor(Math.random()*available.length)],good=lowCarbonDrops<3;
  const group=Art.icons.map((i,n)=>({...i,n})).filter(i=>i.good===good),icon=group[Math.floor(Math.random()*group.length)];
  items.push({x,y:-80,vy:(125+Math.random()*40+elapsed*.75)*fallScale(),angle:(Math.random()-.5)*.09,spin:(Math.random()-.5)*.035,n:icon.n,good,index:icon.index,hit:false});
  lowCarbonDrops=good?lowCarbonDrops+1:0;
@@ -123,11 +123,12 @@ canvas.addEventListener('pointerdown',e=>{if(state==='playing'){canvas.setPointe
 document.addEventListener('click',e=>{if(state!=='boss'||!answered||e.target.closest('#quit,#pause,#sound,a'))return;if(continueBoss())e.stopPropagation();},true);
 document.addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;if(['ArrowLeft','ArrowRight','a','d'].includes(k)&&state==='playing'){e.preventDefault();keys.add(k);}if(k==='Escape'){if(state==='paused')resume();else pause();}});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase().startsWith('arrow')?e.key:e.key.toLowerCase()));
 window.addEventListener('blur',()=>{keys.clear();pause();});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
-$('start').onclick=reset;$('again').onclick=reset;$('restart').onclick=reset;$('pause').onclick=pause;$('resume').onclick=resume;$('quit').onclick=quit;$('true').onclick=()=>answer(true);$('false').onclick=()=>answer(false);$('boss-continue').onclick=continueBoss;
+$('start').onclick=reset;$('again').onclick=quit;$('restart').onclick=reset;$('pause').onclick=pause;$('resume').onclick=resume;$('quit').onclick=quit;$('true').onclick=()=>answer(true);$('false').onclick=()=>answer(false);$('boss-continue').onclick=continueBoss;
+for(let index=0;index<3;index++)$(`choice-${index}`).onclick=()=>{const q=selectedQuestions[bossIndex];if(q?.options)answer(q.options[index]);};
 $('sound').onclick=()=>{muted=!muted;$('sound').innerHTML=muted?'♪<span>音效關閉</span>':'♫<span>音效開啟</span>';$('sound').setAttribute('aria-label',muted?'開啟音效':'關閉音效');$('sound').setAttribute('aria-pressed',String(muted));syncMusic();if(!muted){initAudio();sound('good');}};
 $('open-guide').onclick=$('mobile-guide').onclick=()=>$('guide-dialog').showModal();document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}}));
 // 遊戲座標隨可見畫面延伸，保持卡片與人物比例；直式落下距離增加時同步調整速度。
-function fallScale(){return Math.max(.5,(H-300)/420)*.9;}
+function fallScale(){return Math.max(.5,(H-300)/420)*.99;}
 function resize(){const rect=canvas.getBoundingClientRect(),aspect=rect.width>0&&rect.height>0?rect.width/rect.height:16/9;
  const nextW=720*Math.max(1,aspect),nextH=720/Math.min(1,aspect);
  if(Math.abs(nextW-W)>1||Math.abs(nextH-H)>1){const oldW=W,oldH=H;W=nextW;H=nextH;playerX=Math.max(90,Math.min(W-110,playerX/oldW*W));targetX=Math.max(90,Math.min(W-110,targetX/oldW*W));items=[];floats=[];particles=[];spawn=Math.max(spawn,.4);for(const leaf of leaves){leaf.x=leaf.x/oldW*W;leaf.y=leaf.y/oldH*H;}}

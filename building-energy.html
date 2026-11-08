@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eaf5d8">
+  <meta name="description" content="跟小熊認識建築節能與 PMV、PPD 熱舒適指標。家中冷氣設定 26°C，搭配電風扇，兼顧節能與舒適。">
+  <title>建築節能小教室｜綠能接接樂</title>
+  <link rel="stylesheet" href="typography.css?v=building-lesson-1">
+  <link rel="stylesheet" href="climate-risk.css?v=story-video">
+  <link rel="stylesheet" href="building-energy.css">
+  <script src="building-energy.js" defer></script>
+</head>
+<body>
+  <header class="lesson-header"><a href="index.html" aria-label="回到綠能接接樂首頁"><img src="assets/icdi-logo.png" alt="ICDI 國際氣候發展智庫" width="88" height="69"></a><span>小熊節能教室</span><a class="back-link" href="index.html">← 回遊戲首頁</a></header>
+  <main>
+    <section class="energy-hero" aria-labelledby="lesson-title">
+      <div><span class="lesson-tag">建築節能・進一步學習</span><h1 id="lesson-title">冷氣設 26°C，<br>節能也舒適！</h1><p class="lead">夏天在家開冷氣，先從 <strong>26°C</strong> 開始，搭配電風扇、穿著輕便衣物，讓涼風流動，減少過度降溫的用電。</p><a class="lesson-button" href="#comfort">小熊帶你認識舒適度 ↓</a></div>
+      <div class="cool-room" role="img" aria-label="小熊在冷氣設定26度、搭配電風扇的房間裡，開心學習節能">
+        <div class="air-conditioner"><span>節能模式</span><b>26<span>°C</span></b><i></i></div><div class="window-view"><span>☀</span></div><div class="breeze" aria-hidden="true">〰　〰　〰</div><img src="assets/player-bear.png" alt="" width="437" height="540"><div class="room-fan" aria-hidden="true">✳<i></i></div><span class="room-caption">冷氣＋電風扇，涼得剛剛好</span>
+      </div>
+    </section>
+    <aside class="degree-message"><strong>記住 26°C！</strong><p>官方建議冷氣設定 <b>26°C</b>，搭配電風扇。再依家人感受適度調整，兼顧節能與舒適。</p></aside>
+
+    <section class="story-video" aria-labelledby="energy-video-title">
+      <div class="section-heading"><span>跟著小熊一起學</span><h2 id="energy-video-title">冷氣26度・舒適又節能</h2><p>按下播放，和小熊一起學會涼爽又省電的方法！</p></div>
+      <video controls playsinline preload="metadata" aria-label="冷氣26度舒適又節能教學影片">
+        <source src="video/冷氣26度_舒適又節能.mp4" type="video/mp4">
+        您的瀏覽器不支援影片播放，請<a href="video/冷氣26度_舒適又節能.mp4">開啟教學影片</a>。
+      </video>
+    </section>
+
+    <section id="comfort" aria-labelledby="comfort-title">
+      <div class="section-heading"><span>01 · 不只看溫度計</span><h2 id="comfort-title">什麼叫「舒服」？PMV 與 PPD 告訴你</h2><p>工程師會用熱舒適指標，評估一群人在室內的冷熱感受。</p></div>
+      <div class="comfort-definitions">
+        <article><span class="index-label">PMV</span><h3>預測平均投票值</h3><p class="english-term" lang="en">Predicted Mean Vote</p><p>想像大家一起投票：「現在覺得冷，還是熱？」PMV 預測的是<strong>一群人的平均冷熱感受</strong>。</p><p><b>−3 很冷 → 0 不冷不熱 → ＋3 很熱</b>。接近 0，代表平均感受較接近中性。</p></article>
+        <article><span class="index-label">PPD</span><h3>預測不滿意百分比</h3><p class="english-term" lang="en">Predicted Percentage of Dissatisfied</p><p>預測有多少人會覺得<strong>太冷或太熱</strong>，以百分比表示，數字越小，整體不滿意比例越低。</p><p>即使 PMV＝0，模型中的 PPD 最低仍約 <b>5%</b>，因為每個人的感受不同。</p></article>
+      </div>
+      <div class="pmv-explorer">
+        <h3>動手看看：越冷、越熱，會怎麼樣？</h3><p>拖動 PMV，觀察模型估計的 PPD。這是指標關係示範，<strong>不是依照 26°C 計算的室內舒適度</strong>。</p>
+        <label for="pmv-value">選擇 PMV：<output id="pmv-number" for="pmv-value">0.0</output></label>
+        <input id="pmv-value" type="range" min="-3" max="3" step="0.1" value="0" aria-describedby="pmv-help">
+        <div class="thermal-scale" aria-hidden="true"><span>−3<br>很冷</span><span>−2<br>冷</span><span>−1<br>稍冷</span><span>0<br>中性</span><span>＋1<br>稍暖</span><span>＋2<br>暖</span><span>＋3<br>很熱</span></div>
+        <div class="comfort-reading" role="status" aria-live="polite" aria-atomic="true"><span id="thermal-feeling">不冷不熱</span><strong>PPD 約 <output id="ppd-number" for="pmv-value">5.0</output>%</strong></div>
+        <p id="pmv-help" class="model-note">常見的熱舒適評估範圍為 PMV 約 −0.5～＋0.5，對應 PPD 約低於 10%。這是群體模型，不能保證每個人都舒適；也要留意局部吹風與日曬等情況。</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="factors-title"><div class="section-heading"><span>02 · 四個環境因素＋兩個個人因素</span><h2 id="factors-title">影響舒適度的六個關鍵</h2><p>同樣是 26°C，不同房間、不同的人，感受可能不一樣。</p></div>
+      <div class="energy-factors">
+        <article><span aria-hidden="true">🌡️</span><h3>空氣溫度</h3><p>溫度計量到的室內空氣溫度。冷氣設定值和實際室溫可能有差異。</p></article>
+        <article><span aria-hidden="true">☀️</span><h3>平均輻射溫度</h3><p>窗戶、牆面、屋頂的冷熱也會影響人體。拉上遮陽簾，減少日曬帶來的熱。</p></article>
+        <article><span aria-hidden="true">🌬️</span><h3>空氣流速</h3><p>適當的風能幫助散熱。搭配電風扇，讓涼風更均勻，避免強風一直直吹。</p></article>
+        <article><span aria-hidden="true">💧</span><h3>空氣濕度</h3><p>太潮濕時，汗水較不容易蒸發，可能覺得悶熱；舒適度也要一起看濕度。</p></article>
+        <article><span aria-hidden="true">🚶</span><h3>活動量・代謝率</h3><p>跑跳會產生較多熱，坐著讀書則較少。剛運動完和休息時，冷熱感受不同。</p></article>
+        <article><span aria-hidden="true">👕</span><h3>衣著・服裝熱阻</h3><p>厚外套比較保暖，輕便衣物比較容易散熱。先穿得合適，減少過度開冷氣。</p></article>
+      </div>
+    </section>
+
+    <section class="energy-actions" aria-labelledby="action-title"><img src="assets/ending-win.png" alt="開心分享節能方法的小熊" width="180" height="199"><div><span class="lesson-tag">03 · 把知識帶回家</span><h2 id="action-title">小熊家的節能四招</h2><ol><li><b>冷氣設 26°C</b>：從舒適的設定開始，避免溫度開得太低。</li><li><b>搭配電風扇</b>：促進空氣流動，不必只靠降低冷氣溫度。</li><li><b>做好遮陽、關妥門窗</b>：減少熱進入；也記得適時換氣，維持室內空氣品質。</li><li><b>關閉不使用的設備</b>：離開房間記得關燈、關冷氣，定期清洗濾網。</li></ol><p>節能建築也會運用遮陽、隔熱與高效率設備，讓房子少吸熱、少耗電。</p></div></section>
+
+    <section class="practice" aria-labelledby="practice-title"><span>04 · 換你試試看</span><h2 id="practice-title">哪個做法更能兼顧節能與舒適？</h2><div class="quiz-options" role="group" aria-label="選擇節能做法"><button type="button" data-energy-answer="correct">冷氣設 26°C，搭配電風扇</button><button type="button" data-energy-answer="wrong">冷氣設很低，再穿厚外套</button></div><p id="energy-feedback" class="quiz-feedback" role="status" aria-live="polite">選一個答案，看看小熊怎麼說。練習不影響遊戲分數。</p></section>
+    <footer class="lesson-footer"><p><strong>冷氣 26°C＋電風扇，節能舒適一起來！</strong></p><a class="lesson-button" href="index.html">我學會了，回遊戲首頁 →</a><small>教學另開分頁，原本的遊戲首頁仍保留。</small></footer>
+  </main>
+</body>
+</html>
